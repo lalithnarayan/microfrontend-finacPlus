@@ -18,14 +18,27 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Clear pnpm store
+        run: pnpm store prune || true # Avoids failure if pnpm is not yet installed
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Prepare pnpm
+        run: corepack prepare pnpm@latest --activate
+
+      - name: Check pnpm version
+        run: pnpm -v
 
       - name: Install dependencies
         run: npm run install:deps
 
       - name: Build Project
-        run: npm run build
+        run: VITE_LOG_LEVEL=debug pnpm build
+        timeout-minutes: 10
 
       - name: Run Tests with Coverage
         run: pnpm test:coverage
