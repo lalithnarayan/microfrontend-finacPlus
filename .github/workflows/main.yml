@@ -37,7 +37,7 @@ jobs:
         run: npm run install:deps
 
       - name: Build Project
-        run: VITE_LOG_LEVEL=debug npm build
+        run: VITE_LOG_LEVEL=debug npm run build --verbose
         timeout-minutes: 10
 
       - name: Run Tests with Coverage
