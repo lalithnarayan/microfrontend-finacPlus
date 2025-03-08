@@ -1,4 +1,4 @@
-name: Build and Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages and Vercel
 
 on:
   push:
@@ -14,37 +14,33 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js 18
+      - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'pnpm'
 
-      - name: Install Dependencies with pnpm
+      - name: Enable Corepack and Install pnpm
         run: |
-          # Enable Corepack and prepare pnpm in the same shell
           corepack enable
           corepack prepare pnpm@latest --activate
-          # Verify pnpm is available
-          pnpm --version
-          # Run your install:deps script which uses pnpm
-          npm run install:deps
+          pnpm -v
+
+      - name: Install Dependencies
+        run: pnpm install
 
       - name: Build Host Application
         working-directory: ./host
-        run: npm run build
+        run: pnpm run build
 
       - name: Build Remote Application
         working-directory: ./remote
-        run: npm run build
+        run: pnpm run build
 
       - name: Prepare Deployment Directory
         run: |
-          mkdir build-output
-          # Copy host build output to the deployment root
-          cp -R host/dist/* build-output/
-          # Copy remote build output into a 'remote' subdirectory
           mkdir -p build-output/remote
+          cp -R host/dist/* build-output/
           cp -R remote/dist/* build-output/remote/
 
       - name: Deploy to GitHub Pages
@@ -52,3 +48,20 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build-output
+
+      - name: Run Tests and Collect Coverage
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        working-directory: ./host
+        run: pnpm run test:coverage
+
+      - name: Upload Coverage to Coveralls
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: 'host/coverage/lcov.info'
+
+      - name: Deploy to Vercel
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        working-directory: ./host
+        run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
