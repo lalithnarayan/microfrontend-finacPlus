@@ -45,6 +45,8 @@ http://localhost:4173/
 ## Screenshot
 
 ![screenshot](docs/screenshot.png)
+![screenshot](docs/screenshot2.png)
+![screenshot](docs/screenshot3.png)
 
 ## Features
 
