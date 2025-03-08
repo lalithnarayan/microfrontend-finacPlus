@@ -22,6 +22,18 @@ Library.
 
 ---
 
+Login Credential
+
+username: 'admin',
+	
+password: 'admin123',
+
+---
+
+username: 'user',
+	
+password: 'user',
+
 ## 🎯 Goals
 
 - Achieve a fully functional music library with micro-frontends.
