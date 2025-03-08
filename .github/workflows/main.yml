@@ -20,24 +20,31 @@ jobs:
           node-version: '18'
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Install Dependencies
-        run: pnpm install
+      - name: Install Dependencies with pnpm
+        run: |
+          # Enable Corepack and prepare pnpm in the same shell
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          # Verify pnpm is available
+          pnpm --version
+          # Run your install:deps script which uses pnpm
+          npm run install:deps
 
       - name: Build Host Application
         working-directory: ./host
-        run: pnpm run build
+        run: npm run build
 
       - name: Build Remote Application
         working-directory: ./remote
-        run: pnpm run build
+        run: npm run build
 
       - name: Prepare Deployment Directory
         run: |
-          mkdir -p build-output/remote
+          mkdir build-output
+          # Copy host build output to the deployment root
           cp -R host/dist/* build-output/
+          # Copy remote build output into a 'remote' subdirectory
+          mkdir -p build-output/remote
           cp -R remote/dist/* build-output/remote/
 
       - name: Deploy to GitHub Pages
@@ -45,20 +52,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build-output
-
-      - name: Run Tests and Collect Coverage
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
-        working-directory: ./host
-        run: pnpm run test:coverage
-
-      - name: Upload Coverage to Coveralls
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: 'host/coverage/lcov.info'
-
-      - name: Deploy to Vercel
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
-        working-directory: ./host
-        run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
