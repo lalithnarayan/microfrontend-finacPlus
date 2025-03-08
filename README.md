@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/USERNAME/REPO/badge.svg?branch=main)](https://coveralls.io/github/USERNAME/REPO?branch=main)
+
 # React Micro-Frontend Demo
 
 This project demonstrates a micro-frontend architecture using React, showcasing how to set up host and remote applications that work together seamlessly.
