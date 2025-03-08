@@ -18,14 +18,21 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
+      - name: Clear pnpm store
+        run: pnpm store prune
+
       - name: Install pnpm
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: npm run install:deps
+        run: pnpm install:deps
 
       - name: Build Project
-        run: npm run build
+        run: VITE_LOG_LEVEL=debug pnpm build
+        timeout-minutes: 10
 
       - name: Run Tests with Coverage
         run: pnpm test:coverage
