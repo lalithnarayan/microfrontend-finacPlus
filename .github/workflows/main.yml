@@ -1,4 +1,4 @@
-name: Deploy to Vercel and Upload Coverage to Coveralls
+name: Build, Test, and Deploy Microfrontend Applications
 
 on:
   push:
@@ -9,20 +9,24 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - app: host
+            directory: './host'
+          - app: remote
+            directory: './remote'
+
     steps:
-      - name: Check out the code
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Clear pnpm store
-        run: pnpm store prune || true # Avoids failure if pnpm is not yet installed
+          cache: 'pnpm'
 
       - name: Enable Corepack
         run: corepack enable
@@ -30,23 +34,32 @@ jobs:
       - name: Prepare pnpm
         run: corepack prepare pnpm@latest --activate
 
-      - name: Check pnpm version
-        run: pnpm -v
-
       - name: Install dependencies
-        run: npm run install:deps
+        run: |
+          cd ${{ matrix.directory }}
+          pnpm install
 
-      - name: Build Project
-        run: VITE_LOG_LEVEL=debug npm run build --verbose
+      - name: Build Application
+        run: |
+          cd ${{ matrix.directory }}
+          pnpm run build
         timeout-minutes: 10
 
-      - name: Run Tests with Coverage
-        run: pnpm test:coverage
+      - name: Run Tests and Collect Coverage
+        if: matrix.app == 'host' # Assuming only the host has tests to run
+        run: |
+          cd ${{ matrix.directory }}
+          pnpm run test:coverage
 
       - name: Upload Coverage to Coveralls
+        if: matrix.app == 'host' # Assuming coverage is only relevant for the host
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: '${{ matrix.directory }}/coverage/lcov.info' # Adjust path as needed
 
       - name: Deploy to Vercel
-        run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+        if: matrix.app == 'host' # Assuming only the host is deployed to Vercel
+        run: |
+          cd ${{ matrix.directory }}
+          npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
