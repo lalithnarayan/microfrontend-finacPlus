@@ -1,4 +1,4 @@
-name: Build, Test, and Deploy Microfrontend Applications
+name: Build and Deploy to GitHub Pages, Coveralls, and Vercel
 
 on:
   push:
@@ -10,56 +10,54 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        include:
-          - app: host
-            directory: './host'
-          - app: remote
-            directory: './remote'
-
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
+      - name: Setup Node.js 18
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'pnpm'
 
-      - name: Enable Corepack
-        run: corepack enable
+      - name: Install Dependencies
+        run: npm run install:deps
 
-      - name: Prepare pnpm
-        run: corepack prepare pnpm@latest --activate
+      - name: Build Host Application
+        working-directory: ./host
+        run: npm run build
 
-      - name: Install dependencies
+      - name: Build Remote Application
+        working-directory: ./remote
+        run: npm run build
+
+      - name: Prepare Deployment Directory
         run: |
-          cd ${{ matrix.directory }}
-          pnpm install
+          mkdir build-output
+          # Copy host build output to the deployment root
+          cp -R host/dist/* build-output/
+          # Copy remote build output into a 'remote' subdirectory
+          mkdir -p build-output/remote
+          cp -R remote/dist/* build-output/remote/
 
-      - name: Build Application
-        run: |
-          cd ${{ matrix.directory }}
-          pnpm run build
-        timeout-minutes: 10
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build-output
 
       - name: Run Tests and Collect Coverage
-        if: matrix.app == 'host' # Assuming only the host has tests to run
-        run: |
-          cd ${{ matrix.directory }}
-          pnpm run test:coverage
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        working-directory: ./host
+        run: npm run test:coverage
 
       - name: Upload Coverage to Coveralls
-        if: matrix.app == 'host' # Assuming coverage is only relevant for the host
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: '${{ matrix.directory }}/coverage/lcov.info' # Adjust path as needed
+          path-to-lcov: 'host/coverage/lcov.info' # Adjust path as needed
 
       - name: Deploy to Vercel
-        if: matrix.app == 'host' # Assuming only the host is deployed to Vercel
-        run: |
-          cd ${{ matrix.directory }}
-          npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+        working-directory: ./host
+        run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
