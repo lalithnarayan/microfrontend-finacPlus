@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/23</span>
+                <span class='fraction'>0/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>0/19</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/19</span>
+                <span class='fraction'>0/23</span>
             </div>
         
             
@@ -109,7 +109,12 @@
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -121,6 +126,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -132,6 +138,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -141,6 +148,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -165,6 +175,7 @@ export const useFilteredSongs = <span class="cstat-no" title="statement not cove
 	const { albums } = <span class="cstat-no" title="statement not covered" >useMusic();</span>
 &nbsp;
 	const tracks = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >		if (!albums?.length) <span class="cstat-no" title="statement not covered" >return [];</span></span>
 <span class="cstat-no" title="statement not covered" >		return albums.flatMap(<span class="fstat-no" title="function not covered" >(a</span>lbum) =&gt;</span>
 <span class="cstat-no" title="statement not covered" >			album.tracks.map(<span class="fstat-no" title="function not covered" >(t</span>rack) =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span>
 				...track,
@@ -176,6 +187,7 @@ export const useFilteredSongs = <span class="cstat-no" title="statement not cove
 	}, [albums]);
 &nbsp;
 	const filteredTracks = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >		if (!filter) <span class="cstat-no" title="statement not covered" >return tracks;</span></span>
 		const lowerFilter = <span class="cstat-no" title="statement not covered" >filter.toLowerCase();</span>
 <span class="cstat-no" title="statement not covered" >		return tracks.filter(</span>
 <span class="fstat-no" title="function not covered" >			(t</span>rack) =&gt;
@@ -186,13 +198,16 @@ export const useFilteredSongs = <span class="cstat-no" title="statement not cove
 	}, [tracks, filter]);
 &nbsp;
 	const sortedTracks = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >		return [...filteredTracks].sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >String(a[sortBy]).localeCompare(String(b[sortBy])))</span>;</span>
+<span class="cstat-no" title="statement not covered" >		if (!sortBy) <span class="cstat-no" title="statement not covered" >return filteredTracks;</span></span>
+<span class="cstat-no" title="statement not covered" >		return [...filteredTracks].sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt;</span>
+<span class="cstat-no" title="statement not covered" >			String(a[sortBy] ?? '').localeCompare(String(b[sortBy] ?? ''), undefined, { sensitivity: 'base' }),</span>
+		);
 	}, [filteredTracks, sortBy]);
 &nbsp;
 	const groupedTracks = <span class="cstat-no" title="statement not covered" >useMemo(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
 <span class="cstat-no" title="statement not covered" >		if (!groupBy) <span class="cstat-no" title="statement not covered" >return { 'All Tracks': sortedTracks };</span></span>
-<span class="cstat-no" title="statement not covered" >		return sortedTracks.reduce(<span class="fstat-no" title="function not covered" >(g</span>roups: Record&lt;string, Track[]&gt;, track) =&gt; {</span>
-			const groupKey = <span class="cstat-no" title="statement not covered" >track[groupBy];</span>
+<span class="cstat-no" title="statement not covered" >		return sortedTracks.reduce(<span class="fstat-no" title="function not covered" >(g</span>roups: GroupedSongs, track) =&gt; {</span>
+			const groupKey = <span class="cstat-no" title="statement not covered" >String(track[groupBy] ?? 'Unknown');</span>
 <span class="cstat-no" title="statement not covered" >			if (!groups[groupKey]) <span class="cstat-no" title="statement not covered" >groups[groupKey] = [];</span></span>
 <span class="cstat-no" title="statement not covered" >			groups[groupKey].push(track);</span>
 <span class="cstat-no" title="statement not covered" >			return groups;</span>
@@ -208,7 +223,7 @@ export const useFilteredSongs = <span class="cstat-no" title="statement not cove
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-08T01:16:42.852Z
+                at 2025-03-08T02:27:12.722Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

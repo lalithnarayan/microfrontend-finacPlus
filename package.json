@@ -10,7 +10,8 @@
 		"build": "pnpm -r build",
 		"preview": "pnpm -r preview",
 		"prepare": "husky install",
-		"test": "pnpm -F music_player test"
+		"test": "pnpm -F music_player test",
+		"test:coverage": "pnpm --filter music_player run coverage"
 	},
 	"author": {
 		"name": "lalith narayan kashyap S",

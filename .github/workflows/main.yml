@@ -12,11 +12,14 @@ jobs:
     steps:
       - name: Check out the code
         uses: actions/checkout@v3
-        
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
         run: npm run install:deps
@@ -25,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Run Tests with Coverage
-        run: npm run test:coverage
+        run: pnpm test:coverage
 
       - name: Upload Coverage to Coveralls
         uses: coverallsapp/github-action@v2

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/35</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/32</span>
+                <span class='fraction'>0/31</span>
             </div>
         
             
@@ -165,12 +165,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -220,7 +217,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -251,23 +248,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// src/pages/Login.tsx
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Button, Input } from '@/components/ui';
+import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
-import { Button, Input, AlertBox } from '@/components/ui';
 &nbsp;
 const Login = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
 	const [formData, setFormData] = <span class="cstat-no" title="statement not covered" >useState({ username: '', password: '' });</span>
-	const [errors, setErrors] = <span class="cstat-no" title="statement not covered" >useState({ username: '', password: '' });</span>
-	const [alert, setAlert] = <span class="cstat-no" title="statement not covered" >useState&lt;{ title: string; description: string } | null&gt;(null);</span>
-&nbsp;
+	const [errors, setErrors] = <span class="cstat-no" title="statement not covered" >useState({ username: '', password: '', form: '' });</span>
 	const { login, isAuthenticated } = <span class="cstat-no" title="statement not covered" >useAuth();</span>
 	const navigate = <span class="cstat-no" title="statement not covered" >useNavigate();</span>
 &nbsp;
@@ -303,21 +300,21 @@ const Login = <span class="cstat-no" title="statement not covered" ><span class=
 	const handleSubmit = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>: React.FormEvent) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >		e.preventDefault();</span>
 <span class="cstat-no" title="statement not covered" >		if (!validate()) {</span>
-<span class="cstat-no" title="statement not covered" >			setAlert({</span>
-				title: 'Validation Error',
-				description: 'Please fill in all required fields.',
-			});
+<span class="cstat-no" title="statement not covered" >			setErrors(<span class="fstat-no" title="function not covered" >prev =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span></span>
+				...prev,
+				form: 'Please fill in all required fields.'
+			}));
 <span class="cstat-no" title="statement not covered" >			return;</span>
 		}
-&nbsp;
+	
 <span class="cstat-no" title="statement not covered" >		if (!login(formData.username, formData.password)) {</span>
-<span class="cstat-no" title="statement not covered" >			setAlert({</span>
-				title: 'Login Failed',
-				description: 'Invalid username or password. Please try again.',
-			});
+<span class="cstat-no" title="statement not covered" >			setErrors(<span class="fstat-no" title="function not covered" >prev =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span></span>
+				...prev,
+				form: 'Invalid username or password. Please try again.'
+			}));
 		}
 	};
-&nbsp;
+<span class="cstat-no" title="statement not covered" >		console.log(errors);</span>
 <span class="cstat-no" title="statement not covered" >	return (</span>
 		&lt;div className="flex min-h-screen flex-col justify-center px-6 py-12"&gt;
 			&lt;div className="sm:mx-auto sm:w-full sm:max-w-md"&gt;
@@ -325,7 +322,12 @@ const Login = <span class="cstat-no" title="statement not covered" ><span class=
 			&lt;/div&gt;
 &nbsp;
 			&lt;div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md"&gt;
-				&lt;form className="space-y-6" onSubmit={handleSubmit}&gt;
+				&lt;form className="space-y-6" onSubmit={handleSubmit} noValidate&gt;
+					{errors.form &amp;&amp; (
+						&lt;div className="rounded-md bg-red-50 p-4"&gt;
+							&lt;p className="text-sm text-red-700"&gt;{errors.form}&lt;/p&gt;
+						&lt;/div&gt;
+					)}
 					&lt;Input
 						label="Username"
 						name="username"
@@ -347,8 +349,6 @@ const Login = <span class="cstat-no" title="statement not covered" ><span class=
 					&lt;Button type="submit"&gt;Sign in&lt;/Button&gt;
 				&lt;/form&gt;
 			&lt;/div&gt;
-&nbsp;
-			{alert &amp;&amp; &lt;AlertBox title={alert.title} description={alert.description} onConfirm={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etAlert(null)} /</span>&gt;}
 		&lt;/div&gt;
 	);
 };
@@ -361,7 +361,7 @@ export default Login;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-08T01:16:42.852Z
+                at 2025-03-08T02:27:12.722Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
