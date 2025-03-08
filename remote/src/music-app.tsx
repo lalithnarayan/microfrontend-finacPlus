@@ -1,18 +1,19 @@
 // src/App.tsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ErrorPage from './components/error-page';
 import { getDefaultLayout } from './components/layout';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { MusicProvider } from './context/MusicContext';
+import MusicLibrary from './pages/MusicLibrary/MusicLibrary';
+import './styles/globals.less';
 
 const LoginPage = React.lazy(() => import('./pages/Login'));
-const MusicLibrary = React.lazy(() => import('./pages/MusicLibrary/MusicLibrary'));
-const MusicPlayer = React.lazy(() => import('./components/MusicPlayer'));
-import './styles/globals.less';
-import React from 'react';
+
+import MusicPlayer from './components/MusicPlayer';
+
 import { MusicPlayerProvider } from './context/MusicPlayerContext';
 
 const App = () => {
