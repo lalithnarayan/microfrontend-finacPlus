@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Deploy to Vercel and Upload Coverage to Coveralls
 
 on:
   push:
@@ -23,6 +23,14 @@ jobs:
 
       - name: Build Project
         run: npm run build
+
+      - name: Run Tests with Coverage
+        run: npm run test:coverage
+
+      - name: Upload Coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to Vercel
         run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
