@@ -63,8 +63,12 @@ export default defineConfig(({ mode }) => {
 				remotes: {},
 				shared: {
 					react: {
-						requiredVersion: dependencies.react,
 						singleton: true,
+						requiredVersion: dependencies.react,
+					},
+					'react-dom': {
+						singleton: true,
+						requiredVersion: dependencies['react-dom'],
 					},
 				},
 			}),

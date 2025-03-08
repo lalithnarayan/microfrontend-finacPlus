@@ -27,6 +27,10 @@ export default defineConfig(() => ({
 					requiredVersion: dependencies.react,
 					singleton: true,
 				},
+				'react-dom': {
+					singleton: true,
+					requiredVersion: dependencies['react-dom'],
+				},
 			},
 		}),
 		react(),
