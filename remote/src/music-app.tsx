@@ -8,11 +8,12 @@ import { getDefaultLayout } from './components/layout';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { MusicProvider } from './context/MusicContext';
 
-import LoginPage from './pages/Login';
-import MusicLibrary from './pages/MusicLibrary/MusicLibrary';
-import { MusicPlayerProvider } from './context/MusicPlayerContext';
-import MusicPlayer from './components/MusicPlayer';
+const LoginPage = React.lazy(() => import('./pages/Login'));
+const MusicLibrary = React.lazy(() => import('./pages/MusicLibrary/MusicLibrary'));
+const MusicPlayer = React.lazy(() => import('./components/MusicPlayer'));
 import './styles/globals.less';
+import React from 'react';
+import { MusicPlayerProvider } from './context/MusicPlayerContext';
 
 const App = () => {
 	return (

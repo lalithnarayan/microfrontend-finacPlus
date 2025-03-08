@@ -4,6 +4,7 @@ import { writeFileSync } from 'fs';
 import { defineConfig, loadEnv } from 'vite';
 import { dependencies } from './package.json';
 import { resolve } from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode }) => {
 	const selfEnv = loadEnv(mode, process.cwd());
@@ -12,6 +13,9 @@ export default defineConfig(({ mode }) => {
 			fs: {
 				allow: ['.', '../shared'],
 			},
+		},
+		optimizeDeps: {
+			include: ['react', 'react-dom', 'framer-motion', '@radix-ui/react-alert-dialog', '@radix-ui/react-popover', '@radix-ui/react-slot'],
 		},
 		test: {
 			environment: 'jsdom',
@@ -29,9 +33,12 @@ export default defineConfig(({ mode }) => {
 			},
 			deps: {
 				interopDefault: true, // Enables correct ES module handling
-			  },
+			},
 		},
 		build: {
+			chunkSizeWarningLimit: 500,
+			minify: 'esbuild', // Faster and smaller output
+			sourcemap: false, // Disable sourcemaps to reduce build size
 			target: 'chrome89',
 		},
 		resolve: {
@@ -60,6 +67,10 @@ export default defineConfig(({ mode }) => {
 						singleton: true,
 					},
 				},
+			}),
+			visualizer({
+				filename: 'stats.html',
+				open: true,
 			}),
 			react(),
 		],

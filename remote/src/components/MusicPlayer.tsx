@@ -1,8 +1,9 @@
 // src/components/MusicPlayer.tsx
 import { useMusicPlayer } from '@/context/MusicPlayerContext';
 import { Pause, Play, StopCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import MidiPlayer from 'react-midi-player';
+import { lazy, useEffect, useState } from 'react';
+
+const MidiPlayer = lazy(() => import('react-midi-player'));
 
 const MusicPlayer = () => {
 	const { currentTrack, stopTrack } = useMusicPlayer();
