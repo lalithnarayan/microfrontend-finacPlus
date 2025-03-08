@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
+.sr
+stats.html
 # Module federation temp files
 .__mf__temp
