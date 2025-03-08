@@ -22,13 +22,19 @@ jobs:
         run: npm cache clean --force
 
       - name: Clear pnpm store
-        run: pnpm store prune
+        run: pnpm store prune || true # Avoids failure if pnpm is not yet installed
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Prepare pnpm
+        run: corepack prepare pnpm@latest --activate
+
+      - name: Check pnpm version
+        run: pnpm -v
 
       - name: Install dependencies
-        run: pnpm install:deps
+        run: pnpm install
 
       - name: Build Project
         run: VITE_LOG_LEVEL=debug pnpm build
