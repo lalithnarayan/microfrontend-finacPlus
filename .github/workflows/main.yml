@@ -33,15 +33,15 @@ jobs:
             ${{ runner.os }}-pnpm-
       
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install:deps
       
       - name: Build Host Application
-        working-directory: ./host
+        # working-directory: ./host
         run: pnpm run build
       
-      - name: Build Remote Application
-        working-directory: ./remote
-        run: pnpm run build
+      # - name: Build Remote Application
+      #   working-directory: ./remote
+      #   run: pnpm run build
       
       - name: Prepare Deployment Directory
         run: |
