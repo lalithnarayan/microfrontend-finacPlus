@@ -1,66 +1,72 @@
 name: Build and Deploy to GitHub Pages and Vercel
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
+      
       - name: Setup Node.js 20
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
-
-      - name: Enable Corepack and Prepare pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
-          npx pnpm -v
-
+      
+      # Direct installation of pnpm instead of using cache
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+      
+      # Enable pnpm store cache
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+      
       - name: Install Dependencies
-        run: npx pnpm install
-
+        run: pnpm install
+      
       - name: Build Host Application
         working-directory: ./host
-        run: npx pnpm run build
-
+        run: pnpm run build
+      
       - name: Build Remote Application
         working-directory: ./remote
-        run: npx pnpm run build
-
+        run: pnpm run build
+      
       - name: Prepare Deployment Directory
         run: |
           mkdir -p build-output/remote
           cp -R host/dist/* build-output/
           cp -R remote/dist/* build-output/remote/
-
+      
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: build-output
-
+      
       - name: Run Tests and Collect Coverage
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         working-directory: ./host
-        run: npx pnpm run test:coverage
-
+        run: pnpm run test:coverage
+      
       - name: Upload Coverage to Coveralls
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: 'host/coverage/lcov.info'
-
+      
       - name: Deploy to Vercel
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         working-directory: ./host
