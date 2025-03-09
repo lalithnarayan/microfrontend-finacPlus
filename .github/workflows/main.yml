@@ -24,18 +24,18 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
-          pnpm -v
+          corepack pnpm -v
 
       - name: Install Dependencies
-        run: pnpm install
+        run: corepack pnpm install
 
       - name: Build Host Application
         working-directory: ./host
-        run: pnpm run build
+        run: corepack pnpm run build
 
       - name: Build Remote Application
         working-directory: ./remote
-        run: pnpm run build
+        run: corepack pnpm run build
 
       - name: Prepare Deployment Directory
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Run Tests and Collect Coverage
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         working-directory: ./host
-        run: pnpm run test:coverage
+        run: corepack pnpm run test:coverage
 
       - name: Upload Coverage to Coveralls
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
