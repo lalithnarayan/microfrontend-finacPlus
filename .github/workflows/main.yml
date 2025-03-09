@@ -20,22 +20,22 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Enable Corepack and Install pnpm
+      - name: Enable Corepack and Prepare pnpm
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
-          corepack pnpm -v
+          npx pnpm -v
 
       - name: Install Dependencies
-        run: corepack pnpm install
+        run: npx pnpm install
 
       - name: Build Host Application
         working-directory: ./host
-        run: corepack pnpm run build
+        run: npx pnpm run build
 
       - name: Build Remote Application
         working-directory: ./remote
-        run: corepack pnpm run build
+        run: npx pnpm run build
 
       - name: Prepare Deployment Directory
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Run Tests and Collect Coverage
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
         working-directory: ./host
-        run: corepack pnpm run test:coverage
+        run: npx pnpm run test:coverage
 
       - name: Upload Coverage to Coveralls
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
