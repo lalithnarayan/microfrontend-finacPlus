@@ -32,7 +32,7 @@ password: 'admin123',
 
 username: 'user',
 	
-password: 'user',
+password: 'user123',
 
 ## 🎯 Goals
 
